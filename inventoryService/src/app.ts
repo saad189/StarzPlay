@@ -1,14 +1,24 @@
-import express, { json } from "express";
+import express from "express";
+import dotenv from "dotenv";
 import cors from "cors";
-import { config } from "dotenv";
-
+import helmet from "helmet";
 import routes from "./routes";
+import errorHandler from "./middleware/errorHandler.middleware";
 
-config();
+
+dotenv.config();
+
 const app = express();
 
-app.use(express.json());
+// Basic Middlewares
 app.use(cors());
+app.use(helmet());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
 app.use("/api", routes);
+
+app.use(errorHandler);
 
 export default app;
