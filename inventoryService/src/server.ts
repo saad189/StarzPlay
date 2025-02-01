@@ -1,35 +1,27 @@
 import app from "./app";
-import sequelize from "./config/database.config";
+import sequelize, { initializeSequelize } from "./config/database.config";
+
 import { producer, consumer } from "./config/kafka.config";
 import redisClient from "./config/redis.config";
+import { consumeInventoryUpdates } from "./consumers/inventory.consumer";
+
 import logger from "./utils/logger";
 
 
 const PORT = process.env.PORT || 3000;
 
+
 async function startServer() {
   try {
     // Sequelize DB Connection
-    await sequelize.authenticate();
-    logger.info("Connected to Database:", sequelize.getDatabaseName());
+    await initializeSequelize();
 
-    // Sync all models
-    await sequelize.sync({ alter: true });
-    logger.info("Database synchronized");
-
-    //Kafka Producer & Consumer
+    //Kafka producer connection;
     await producer.connect();
-    await consumer.connect();
-    logger.info("Kafka Producer and Consumer connected");
 
-    // Subscribe to a topic | Recheck this
-    await consumer.subscribe({ topic: "user_events", fromBeginning: true });
-    await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
-        logger.info(" Message received:", message.value?.toString());
-        // handle message
-      }
-    });
+    // Kafka consumer Connection
+    await consumeInventoryUpdates();
+
 
     // Redis Connection
     await redisClient.connect();
@@ -48,7 +40,7 @@ async function startServer() {
 
 // Graceful shutdown (SIGINT)
 process.on("SIGINT", async () => {
-  logger.info("🛑 Graceful Shutdown");
+  logger.info("Graceful Shutdown");
   try {
     await producer.disconnect();
     await consumer.disconnect();
