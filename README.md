@@ -34,6 +34,7 @@ KAFKA_BROKER=localhost:9092
 5. npm run migrate
 6. docker-compose up -d
 7. npm run start
+8. npx ts-node src/utils/kafkaTestProducer.ts (for testing events with kafka)
 
 ```
 #### API Endpoints (Examples):
