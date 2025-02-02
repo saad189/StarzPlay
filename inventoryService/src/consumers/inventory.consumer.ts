@@ -18,8 +18,11 @@ export async function consumeInventoryUpdates() {
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 try {
+
                     const msgValue = message.value?.toString();
                     if (!msgValue) return;
+
+                    logger.log(`Received message on ${topic} (partition ${partition}):`, msgValue);
 
                     const event = JSON.parse(msgValue);
                     logger.info(`Received message on topic=${topic}: ${msgValue}`);
