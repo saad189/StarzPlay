@@ -8,9 +8,9 @@ class InventoryController {
 
     try {
       const { productId } = request.params;
-      const stock = await InventoryService.getStock(productId);
+      const quantity = await InventoryService.getStock(productId);
 
-      response.status(StatusCodes.OK).json({ productId, stock });
+      response.status(StatusCodes.OK).json({ productId, quantity });
     } catch (error: any) {
       response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -19,8 +19,8 @@ class InventoryController {
 
   static async updateStock(request: Request, response: Response) {
     try {
-      const { productId, quantity } = request.body;
-      const updatedStock = await InventoryService.updateStock(productId, quantity);
+      const { productId, quantity, timestamp } = request.body;
+      const updatedStock = await InventoryService.updateStock(productId, quantity, timestamp);
 
       response.status(StatusCodes.OK).json(updatedStock);
     } catch (error: any) {

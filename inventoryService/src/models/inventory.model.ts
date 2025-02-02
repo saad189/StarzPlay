@@ -8,6 +8,8 @@ export class Inventory extends Model<Inventory> {
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   quantity!: number;
 
+  @Column({ type: DataType.DATE, allowNull: false })
+  timestamp!: Date;
 }
 
 export default Inventory;

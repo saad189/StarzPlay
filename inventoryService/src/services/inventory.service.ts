@@ -38,18 +38,18 @@ class InventoryService {
 
   }
 
-  static async updateStock(productId: string, quantity: number) {
+  static async updateStock(productId: string, quantity: number, timestamp: string) {
     try {
 
-      const [updatedCount] = await Inventory.update({ quantity }, { where: { productId } });
+      const [updatedCount] = await Inventory.update({ quantity, timestamp: new Date(timestamp) }, { where: { productId } });
       if (updatedCount == 0) throw new Error(`Product ${productId} not found`);
 
       await redisClient.set(`stock:${productId}`, quantity);
-      logger.info(`Updated stock for productId=${productId} to quantity=${quantity}`);
+      logger.info(`Updated stock for productId=${productId} to quantity=${quantity} at ${timestamp}`);
 
       if (quantity < LOW_STOCK_THRESHOLD) await this.sendLowStockWarning(productId, quantity);
 
-      return { productId, quantity };
+      return { productId, quantity, timestamp };
     }
     catch (error: any) {
       logger.error(`Error updating stock: ${error.message}`, { stack: error.stack });
@@ -58,13 +58,13 @@ class InventoryService {
 
   }
 
-  static async processOrder(productId: string, quantity: number) {
+  static async processOrder(productId: string, quantity: number, timestamp: string) {
     try {
       const currentStock = await this.getStock(productId);
 
       if (currentStock < quantity) throw new Error(`Insufficient stock for productId=${productId}`);
 
-      const updatedStock = await this.updateStock(productId, currentStock - quantity);
+      const updatedStock = await this.updateStock(productId, currentStock - quantity, timestamp);
       logger.info(`Processed order for productId=${productId}, remaining quantity=${updatedStock.quantity}`);
 
       await producer.send({

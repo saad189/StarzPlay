@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx tsc --outDir dist | npx jest dist/__tests__/",
     "dev": "nodemon src/server.ts",
     "build": "tsc",
     "start": "tsc && nodemon dist/server.js",
@@ -35,14 +35,17 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/helmet": "^0.0.48",
+    "@types/jest": "^29.5.14",
     "@types/kafkajs": "^1.8.2",
     "@types/node": "^22.12.0",
+    "@types/supertest": "^6.0.2",
     "@types/winston": "^2.4.4",
     "eslint": "^9.19.0",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "sequelize-cli": "^6.6.2",
     "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
