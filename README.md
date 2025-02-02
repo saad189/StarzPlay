@@ -4,6 +4,7 @@
 - Built in Node with Typescript
 - Uses Redis for High Throughput
 - Event Management through Kafka
+- Added unit tests for Controller and Consumer
 - **Additional Feature: Low Stock Alert**
 
  #### Get Started:
