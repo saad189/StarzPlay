@@ -33,7 +33,7 @@ describe('Inventory Routes', () => {
         it('should handle errors from the service', async () => {
             (InventoryService.getStock as jest.Mock).mockRejectedValue(new Error('DB error'));
 
-            const res = await request(app).get('/api/inventory/stock-levels/SKU123');
+            const res = await request(app).get(`/api/inventory/stock-levels/${mockID}`);
 
             expect(res.status).toBe(500);
         });

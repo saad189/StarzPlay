@@ -3,7 +3,7 @@ import redisClient from "../config/redis.config";
 import logger from '../utils/logger';
 import { producer } from '../config/kafka.config';
 import { KAFKA_CONSTANTS } from '../constants/kafka.contants';
-import { ALLOWED_CONCURRENCY_RETRIES, LOW_STOCK_THRESHOLD } from '../constants/common.constants';
+import { ALLOWED_RETRIES, LOW_STOCK_THRESHOLD } from '../constants/common.constants';
 
 const { TOPICS: { LOW_STOCK_ALERTS, ORDER_UPDATE }, EVENT_TYPES: { LOW_STOCK, ORDER_PROCESSED } } = KAFKA_CONSTANTS;
 class InventoryService {
@@ -72,7 +72,7 @@ class InventoryService {
 
     let isLowStock = false;
 
-    for (let i = 0; i < ALLOWED_CONCURRENCY_RETRIES; ++i) {
+    for (let i = 0; i < ALLOWED_RETRIES; ++i) {
       try {
 
         await redisClient.watch(key);
@@ -124,7 +124,7 @@ class InventoryService {
           logger.error(`Error processing order: ${error.message}`, { stack: error.stack });
           throw error;
         }
-        logger.warn(`Retrying processOrder due to concurrency conflict. Retries left: ${ALLOWED_CONCURRENCY_RETRIES - (i + 1)}. Error: ${error.message}`);
+        logger.warn(`Retrying processOrder due to concurrency conflict. Retries left: ${ALLOWED_RETRIES - (i + 1)}. Error: ${error.message}`);
 
       }
     }

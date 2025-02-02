@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import * as dotenv from "dotenv";
 import mysql from "mysql2/promise";
+import logger from "../utils/logger";
 
 dotenv.config();
 
@@ -35,10 +36,10 @@ export async function initializeSequelize() {
   await createDatabase(); // Ensure DB exists before connecting
 
   await sequelize.authenticate();
-  console.log("✅ Connected to Database");
+  logger.info("Connected to Database");
 
   await sequelize.sync({ alter: true });
-  console.log("✅ Database synchronized");
+  logger.info("Database synchronized");
 
   return sequelize;
 }
